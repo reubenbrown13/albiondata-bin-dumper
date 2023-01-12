@@ -24,9 +24,9 @@ namespace Extractor.Extractors
       }
     }
 
-    private string GetBinFilePath(string mainGameFolder)
+    private string GetBinFilePath(string mainGameFolder )
     {
-      return Path.Combine(mainGameFolder, @".\game\Albion-Online_Data\StreamingAssets\GameData");
+      return Path.Combine(mainGameFolder, @".\Albion-Online_Data\StreamingAssets\GameData");
     }
 
     private string DecryptBinFile(string outputFolderPath, string binFile, string subdir)
@@ -41,13 +41,12 @@ namespace Extractor.Extractors
 
       var outSubdirs = Path.GetDirectoryName(Path.Combine(outputFolderPath, subdir));
 
-      Console.Out.WriteLine("Extracting " + binFileWOE + ".bin...");
-
       if (outSubdirs != "")
         Directory.CreateDirectory(outSubdirs);
       var finalOutPath = Path.Combine(outSubdirs, binFileWOE);
       var finalXmlPath = finalOutPath + ".xml";
       var finalJsonPath = finalOutPath + ".json";
+      Console.Out.WriteLine("Extracting " + binFileWOE + ".bin... to:" + finalOutPath +".xml");
 
       using (var outputXmlFile = File.Create(finalXmlPath))
       {

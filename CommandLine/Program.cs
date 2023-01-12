@@ -3,6 +3,8 @@ using Extractor.Extractors;
 using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.ComponentModel.DataAnnotations;
+using log4net.Core;
+using log4net.Repository.Hierarchy;
 
 namespace CommandLine
 {
@@ -13,6 +15,9 @@ namespace CommandLine
 
     [Option(Description = "Export Mode", ShortName = "m")]
     private ExportMode ExportMode { get; } = ExportMode.Everything;
+
+    [Option(Description = "Server Type", ShortName = "s")]
+    private ServerType ServerType { get; } = ServerType.Live;
 
     [Required]
     [Option(Description = "Game Folder", ShortName = "d")]
@@ -48,46 +53,59 @@ namespace CommandLine
         exportTypeString = "Text List and JSON";
       }
 
-      var localizationData = new LocalizationData(MainGameFolder, OutputFolderPath);
+      string serverTypeString = "game";
+      if (ServerType == ServerType.Staging)
+      {
+        serverTypeString = "staging";
+      }
+      if (ServerType == ServerType.Playground)
+      {
+        serverTypeString = "playground";
+      }
+      string mainGameFolderString = MainGameFolder + serverTypeString;
+      mainGameFolderString = mainGameFolderString.Replace("'", "");
+
+      var localizationData = new LocalizationData(mainGameFolderString, OutputFolderPath);
 
       switch (ExportMode)
       {
         case ExportMode.ItemExtraction:
-          ExtractItems(localizationData, exportTypeString);
+          ExtractItems(mainGameFolderString, localizationData, exportTypeString);
           break;
         case ExportMode.LocationExtraction:
-          ExtractLocations(exportTypeString);
+          ExtractLocations(mainGameFolderString, exportTypeString);
           break;
         case ExportMode.DumpAllXML:
-          DumpAllXml();
+          DumpAllXml(mainGameFolderString);
           break;
         case ExportMode.Everything:
-          ExtractItems(localizationData, exportTypeString);
-          ExtractLocations(exportTypeString);
-          DumpAllXml();
+          ExtractItems(mainGameFolderString, localizationData, exportTypeString);
+          ExtractLocations(mainGameFolderString, exportTypeString);
+          DumpAllXml(mainGameFolderString);
           break;
       }
+
       Console.Out.WriteLine("#---- Finished Extraction Operation ----#");
     }
 
-    public void ExtractItems(LocalizationData localizationData, string exportTypeString)
+    public void ExtractItems(string mainGameFolderString, LocalizationData localizationData, string exportTypeString)
     {
-      Console.Out.WriteLine("--- Starting Extraction of Items as " + exportTypeString + " ---");
-      new ItemExtractor(MainGameFolder, OutputFolderPath, ExportMode, ExportType).Extract(localizationData);
+      Console.Out.WriteLine("--- Starting Extraction of Items (" + mainGameFolderString + ") as " + exportTypeString + " ---");
+      new ItemExtractor(mainGameFolderString, OutputFolderPath, ExportMode, ExportType).Extract(localizationData);
       Console.Out.WriteLine("--- Extraction Complete! ---");
     }
 
-    public void ExtractLocations(string exportTypeString)
+    public void ExtractLocations(string mainGameFolderString, string exportTypeString)
     {
-      Console.Out.WriteLine("--- Starting Extraction of Locations as " + exportTypeString + " ---");
-      new LocationExtractor(MainGameFolder, OutputFolderPath, ExportMode, ExportType).Extract();
+      Console.Out.WriteLine("--- Starting Extraction of Locations (" + mainGameFolderString + ") as " + exportTypeString + " ---");
+      new LocationExtractor(mainGameFolderString, OutputFolderPath, ExportMode, ExportType).Extract();
       Console.Out.WriteLine("--- Extraction Complete! ---");
     }
 
-    public void DumpAllXml()
+    public void DumpAllXml(string mainGameFolderString)
     {
-      Console.Out.WriteLine("--- Starting Extraction of All Files as XML ---");
-      new BinaryDumper().Extract(MainGameFolder, OutputFolderPath);
+      Console.Out.WriteLine("--- Starting Extraction of All Files (" + mainGameFolderString + ") as XML from  ---");
+      new BinaryDumper().Extract(mainGameFolderString, OutputFolderPath);
       Console.Out.WriteLine("--- Extraction Complete! ---");
     }
   }
