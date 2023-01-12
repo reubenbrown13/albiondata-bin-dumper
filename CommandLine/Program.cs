@@ -3,8 +3,6 @@ using Extractor.Extractors;
 using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.ComponentModel.DataAnnotations;
-using log4net.Core;
-using log4net.Repository.Hierarchy;
 
 namespace CommandLine
 {

@@ -79,13 +79,6 @@ namespace Extractor.Extractors
     {
       var xmlPath = DecryptBinFile(GetBinFilePath(), outputFolderPath);
       Console.WriteLine("Attribute of the File " + outputFolderPath);
-      /*
-      FileInfo information = new FileInfo(outputFolderPath);
-      // Get the file information
-      FileAttributes attributes = information.Attributes;
-      // Display file information
-      Console.WriteLine("Attribute of the File " + outputFolderPath + " is {0}", attributes + "with length of : " + information.Exists);
-      */
       try {
         using (var inputFile = File.OpenRead(xmlPath))
         {
@@ -134,13 +127,7 @@ namespace Extractor.Extractors
       using (var outputStream = File.Create(finalOutPath))
       {
         BinaryDecrypter.DecryptBinaryFile(binFile, outputStream);
-        /*var sr = new StreamReader(outputStream);
-        Console.Out.WriteLine("Contents stored in :" + sr.ReadToEnd() );*/
       }
-      /*using (StreamReader sr = File.OpenText(finalOutPath))
-      {
-        Console.Out.WriteLine("Contents stored in :" + sr.ReadToEnd());
-      }*/
       return finalOutPath;
     }
 

@@ -28,7 +28,6 @@ namespace Extractor.Extractors
         };
         var outBuffer = tDES.CreateDecryptor().TransformFinalBlock(fileBuffer, 0, fileBuffer.Length);
 
-        //var decompression = new GZipStream(new MemoryStream(outBuffer), CompressionMode.Decompress);
         const int size = 4096;
         var buffer = new byte[size];
         int bytesRead = 0;
@@ -37,34 +36,8 @@ namespace Extractor.Extractors
           while ( (bytesRead = decompression.Read(buffer, 0, buffer.Length)) > 0 )
           {
             outputStream.Write(buffer, 0, bytesRead);
-            //Console.Out.WriteLine("line" + Convert.ToInt32(outputStream.Length));
-          }
-          //Console.Out.WriteLine("line" + bytesRead + ":" + Encoding.ASCII.GetString(buffer));
-        }
-        /*  try w/ saving as plain text */
-        /*StreamWriter sw = new StreamWriter(outputStream);
-        using (GZipStream decompression = new GZipStream(new MemoryStream(outBuffer), CompressionMode.Decompress))
-        {
-          while ( (bytesRead = decompression.Read(buffer, 0, buffer.Length)) > 0 )
-          {
-            sw.Write( Encoding.UTF8.GetString(buffer) );
-            //Console.Out.WriteLine("line" + Convert.ToInt32(outputStream.Length));
-          }
-          //Console.Out.WriteLine("line" + bytesRead + ":" + Encoding.UTF8.GetString(buffer));
-        }
-        sw.Close();*/
-        /*
-        int count;
-        do
-        {
-          count = decompression.Read(buffer, 0, size);
-          if (count > 0)
-          {
-            outputStream.Write(buffer, 0, count);
-            Console.Out.WriteLine("line"+count+":"+buffer);
           }
         }
-        while (count > 0); */
       }
     }
   }
