@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -27,19 +28,16 @@ namespace Extractor.Extractors
         };
         var outBuffer = tDES.CreateDecryptor().TransformFinalBlock(fileBuffer, 0, fileBuffer.Length);
 
-        var decompression = new GZipStream(new MemoryStream(outBuffer), CompressionMode.Decompress);
         const int size = 4096;
         var buffer = new byte[size];
-        int count;
-        do
+        int bytesRead = 0;
+        using (GZipStream decompression = new GZipStream(new MemoryStream(outBuffer), CompressionMode.Decompress))
         {
-          count = decompression.Read(buffer, 0, size);
-          if (count > 0)
+          while ( (bytesRead = decompression.Read(buffer, 0, buffer.Length)) > 0 )
           {
-            outputStream.Write(buffer, 0, count);
+            outputStream.Write(buffer, 0, bytesRead);
           }
         }
-        while (count > 0);
       }
     }
   }

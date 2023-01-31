@@ -37,6 +37,13 @@ namespace Extractor.Extractors
     Everything
   }
 
+  public enum ServerType
+  {
+      Live,
+      Staging,
+      Playground
+  }
+
   public abstract class BaseExtractor
   {
     protected readonly string outputFolderPath;
@@ -71,53 +78,56 @@ namespace Extractor.Extractors
     public void Extract(LocalizationData localizationData = default)
     {
       var xmlPath = DecryptBinFile(GetBinFilePath(), outputFolderPath);
-      using (var inputFile = File.OpenRead(xmlPath))
-      {
-        var streamTypes = new List<StreamType>();
-        if (exportType == ExportType.TextList || exportType == ExportType.Both)
+      Console.WriteLine("Attribute of the File " + outputFolderPath);
+      try {
+        using (var inputFile = File.OpenRead(xmlPath))
         {
-          const ExportType exportType = ExportType.TextList;
-          streamTypes.Add(new StreamType
+          var streamTypes = new List<StreamType>();
+          if (exportType == ExportType.TextList || exportType == ExportType.Both)
           {
-            Stream = GetExportStream(exportType),
-            ExportType = exportType
-          });
-        }
-        if (exportType == ExportType.Json || exportType == ExportType.Both)
-        {
-          const ExportType exportType = ExportType.Json;
-          streamTypes.Add(new StreamType
+            const ExportType exportType = ExportType.TextList;
+            streamTypes.Add(new StreamType
+            {
+              Stream = GetExportStream(exportType),
+              ExportType = exportType
+            });
+          }
+          if (exportType == ExportType.Json || exportType == ExportType.Both)
           {
-            Stream = GetExportStream(exportType),
-            ExportType = exportType
-          });
-        }
-        var multiStream = new MultiStream(streamTypes.ToArray());
+            const ExportType exportType = ExportType.Json;
+            streamTypes.Add(new StreamType
+            {
+              Stream = GetExportStream(exportType),
+              ExportType = exportType
+            });
+          }
+          var multiStream = new MultiStream(streamTypes.ToArray());
 
-        ExtractFromXML(inputFile, multiStream, WriteItem, localizationData);
+          ExtractFromXML(inputFile, multiStream, WriteItem, localizationData);
 
-        foreach (var streamType in streamTypes)
-        {
-          CloseExportStream(streamType.Stream, streamType.ExportType);
-          streamType.Stream.Close();
+          foreach (var streamType in streamTypes)
+          {
+            CloseExportStream(streamType.Stream, streamType.ExportType);
+            streamType.Stream.Close();
+          }
         }
+        //Console.Out.WriteLine("End of Extract");
       }
+      catch { throw new ArgumentException(); }
     }
 
     public static string DecryptBinFile(string binFile, string outputFolderPath)
     {
       var binFileWOE = Path.GetFileNameWithoutExtension(binFile);
 
-      Console.Out.WriteLine("Extracting " + binFileWOE + ".bin...");
-
       var finalOutPath = Path.ChangeExtension(Path.Combine(outputFolderPath, binFile.Substring(binFile.LastIndexOf("GameData\\") + 9)), ".xml");
+      Console.Out.WriteLine("Extracting " + binFileWOE + ".bin... to: "+ finalOutPath);
       Directory.CreateDirectory(Path.GetDirectoryName(finalOutPath));
 
       using (var outputStream = File.Create(finalOutPath))
       {
         BinaryDecrypter.DecryptBinaryFile(binFile, outputStream);
       }
-
       return finalOutPath;
     }
 
