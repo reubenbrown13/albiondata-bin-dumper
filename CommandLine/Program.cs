@@ -3,6 +3,7 @@ using Extractor.Extractors;
 using McMaster.Extensions.CommandLineUtils;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 
 namespace CommandLine
 {
@@ -52,6 +53,10 @@ namespace CommandLine
       }
 
       string serverTypeString = "game";
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+      {
+        serverTypeString = "game_x64";
+      }
       if (ServerType == ServerType.Staging)
       {
         serverTypeString = "staging";

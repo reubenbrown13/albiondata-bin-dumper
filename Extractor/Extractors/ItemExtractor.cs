@@ -125,7 +125,7 @@ namespace Extractor.Extractors
 
     protected override string GetBinFilePath()
     {
-      return Path.Combine(mainGameFolder, @".\game\Albion-Online_Data\StreamingAssets\GameData\items.bin");
+      return Path.Combine(mainGameFolder, $".{Path.DirectorySeparatorChar}Albion-Online_Data{Path.DirectorySeparatorChar}StreamingAssets{Path.DirectorySeparatorChar}GameData{Path.DirectorySeparatorChar}items.bin");
     }
   }
 }
