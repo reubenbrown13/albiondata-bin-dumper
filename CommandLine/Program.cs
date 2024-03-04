@@ -53,10 +53,6 @@ namespace CommandLine
       }
 
       string serverTypeString = "game";
-      if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-      {
-        serverTypeString = "game_x64";
-      }
       if (ServerType == ServerType.Staging)
       {
         serverTypeString = "staging";
@@ -64,6 +60,10 @@ namespace CommandLine
       if (ServerType == ServerType.Playground)
       {
         serverTypeString = "playground";
+      }
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+      {
+        serverTypeString = $"{serverTypeString}_x64";
       }
       string mainGameFolderString = MainGameFolder + serverTypeString;
       mainGameFolderString = mainGameFolderString.Replace("'", "");
