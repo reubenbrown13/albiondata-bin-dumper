@@ -88,6 +88,7 @@ namespace CommandLine
           break;
       }
 
+      Console.Out.WriteLine($"Game path supplied: {mainGameFolderString}");
       Console.Out.WriteLine("#---- Finished Extraction Operation ----#");
     }
 
