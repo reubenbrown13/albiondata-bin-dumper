@@ -56,10 +56,6 @@ namespace CommandLine
       if (ServerType == ServerType.Staging)
       {
         serverTypeString = "staging";
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-          serverTypeString = "staging_x64";
-        }
       }
       if (ServerType == ServerType.Playground)
       {
